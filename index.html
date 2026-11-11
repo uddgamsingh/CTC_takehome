@@ -1,6 +1,9 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>India CTC Breakup</title>
-<meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap">
@@ -26,6 +29,7 @@
   --c-take:#37c493; --c-pf:#7d9dff; --c-tax:#f19a45; color-scheme:dark;
 }
 *{box-sizing:border-box}
+body{margin:0}
 body{
   background:var(--bg); color:var(--ink); font-family:var(--font-body); font-size:15px; line-height:1.5;
   padding-block:24px 48px;
@@ -129,6 +133,8 @@ tr.sel td{background:var(--surface-2)}
   .bar span{transition:flex-basis .25s ease,width .25s ease}
 }
 </style>
+</head>
+<body>
 
 <main class="wrap">
   <header>
@@ -182,15 +188,15 @@ tr.sel td{background:var(--surface-2)}
         <input id="ded" inputmode="numeric" value="1,50,000" autocomplete="off">
       </div>
       <div class="checks">
-        <label class="check"><input type="checkbox" id="optEr" checked><span>Employer PF is part of my CTC<small>Employer adds 12% of basic, and it sits inside the CTC figure.</small></span></label>
-        <label class="check"><input type="checkbox" id="optCap"><span>Apply the EPFO wage ceiling<small>PF is calculated on a basic of at most ₹15,000 a month.</small></span></label>
+        
+        <label class="check"><input type="checkbox" id="optCap" checked><span>Apply the new EPFO wage ceiling of ₹25,000<small>The employer's PF is always counted inside CTC. PF for you and the employer is calculated on a basic of at most ₹25,000 a month (₹3 lakh a year), up from ₹15,000. Turn this off if your company pays PF on the full basic.</small></span></label>
       </div>
     </div>
   </section>
 
   <section class="panel" aria-live="polite">
     <h2>Where this CTC goes</h2>
-    <p class="sub">Basic is 50% of CTC. PF is 12% of basic from you, and 12% from the employer. Take-home is what reaches your bank account.</p>
+    <p class="sub">Basic is 50% of CTC. PF is 12% of basic from you, and 12% from the employer. Both PF shares are counted in the PF slice. Take-home is what reaches your bank account.</p>
     <div class="bar" id="bar" role="img" aria-label="Split of CTC"></div>
     <div class="cards" id="cards"></div>
   </section>
@@ -258,7 +264,7 @@ function surBand(inc,regime){
 function calc(ctc,o){
   var regime=o.regime,slabs=regime==="new"?NEW_SLABS:OLD_SLABS;
   var basic=ctc*0.5;
-  var pfBase=o.capPf?Math.min(basic,180000):basic;
+  var pfBase=o.capPf?Math.min(basic,300000):basic;
   var eePF=0.12*pfBase;
   var erPF=o.includeEr?0.12*pfBase:0;
   var gross=ctc-erPF;
@@ -301,7 +307,7 @@ function calc(ctc,o){
 
 var $=function(id){return document.getElementById(id);};
 var MIN=1,MAX=1e9;
-var state={ctc:1e6,regime:"new",ded:150000,includeEr:true,capPf:false};
+var state={ctc:1e6,regime:"new",ded:150000,includeEr:true,capPf:true};
 var nf=new Intl.NumberFormat("en-IN",{maximumFractionDigits:0});
 var nf2=new Intl.NumberFormat("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2});
 
@@ -377,10 +383,10 @@ function renderResults(r){
     card("var(--c-take)","Take-home",money(r.takehome),words(r.takehome),[
       ["Per month",money(r.takehome/12)],["Share of CTC",pct(r.shTake)]
     ])+
-    card("var(--c-pf)","Provident fund",money(r.pf),words(r.pf),[
+    card("var(--c-pf)","PF (you + employer)",money(r.pf),words(r.pf),[
       ["Per month",money(r.pf/12)],
-      ["From your pay",money(r.eePF)],
-      ["From employer",money(r.erPF)],
+      ["Your 12%, cut from salary",money(r.eePF)+" ("+money(r.eePF/12)+"/mo)"],
+      ["Employer 12%, inside CTC",money(r.erPF)+" ("+money(r.erPF/12)+"/mo)"],
       ["Share of CTC",pct(r.shPf)]
     ])+
     card("var(--c-tax)","Income tax",money(r.tax),words(r.tax),[
@@ -611,11 +617,11 @@ $("ded").addEventListener("input",function(){
   update();
 });
 $("ded").addEventListener("change",function(){$("ded").value=nf.format(state.ded);});
-$("optEr").addEventListener("change",function(){state.includeEr=$("optEr").checked;update();});
+
 $("optCap").addEventListener("change",function(){state.capPf=$("optCap").checked;update();});
 initChart();
 setCtc(1e6);
 })();
 </script>
-
-</body></html>
+</body>
+</html>
