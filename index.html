@@ -1,0 +1,678 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>India CTC Breakup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one column tool. Controls first, the three-way split next, workings and a full-range chart below. */
+:root{
+  --bg:#f4f6f9; --surface:#ffffff; --surface-2:#eceff4;
+  --ink:#131a26; --ink-2:#46505f; --ink-3:#667184; --line:#d9dee7;
+  --c-take:#12805c; --c-pf:#2d5bd1; --c-tax:#c8620a; --c-ins:#7b4bb7;
+  --font-display:'Bricolage Grotesque','Hanken Grotesk',system-ui,sans-serif;
+  --font-body:'Hanken Grotesk',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0e1219; --surface:#171c26; --surface-2:#202733;
+    --ink:#eaedf3; --ink-2:#b0b8c6; --ink-3:#8993a5; --line:#2a3240;
+    --c-take:#37c493; --c-pf:#7d9dff; --c-tax:#f19a45; --c-ins:#b996f0; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0e1219; --surface:#171c26; --surface-2:#202733;
+  --ink:#eaedf3; --ink-2:#b0b8c6; --ink-3:#8993a5; --line:#2a3240;
+  --c-take:#37c493; --c-pf:#7d9dff; --c-tax:#f19a45; --c-ins:#b996f0; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background:var(--bg); color:var(--ink); font-family:var(--font-body); font-size:15px; line-height:1.5;
+  padding-block:24px 48px;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap{max-width:980px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+.eyebrow{margin:0 0 6px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+h1{margin:0;font-family:var(--font-display);font-weight:700;font-size:clamp(24px,4vw,30px);line-height:1.1;letter-spacing:-.02em;text-wrap:balance}
+.lede{margin:8px 0 0;color:var(--ink-2);max-width:60ch}
+h2{margin:0 0 4px;font-family:var(--font-display);font-size:20px;font-weight:650;letter-spacing:-.01em;text-wrap:balance}
+.sub{margin:0 0 14px;color:var(--ink-2);font-size:14px;max-width:70ch}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;min-width:0}
+
+/* controls */
+.ctc-row{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between;margin-bottom:10px}
+.ctc-read{min-width:0}
+.ctc-big{display:block;font-family:var(--font-display);font-weight:700;font-size:clamp(30px,6vw,40px);line-height:1.05;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.ctc-full{display:block;margin-top:6px;color:var(--ink-2);font-size:14px;font-variant-numeric:tabular-nums}
+.field label,.lbl{display:block;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin-bottom:4px}
+.amt-field{display:flex;align-items:center;border:1px solid var(--line);border-radius:10px;background:var(--bg);overflow:hidden}
+.amt-field:focus-within{outline:2px solid var(--c-pf);outline-offset:1px}
+.amt-field span{padding-left:12px;color:var(--ink-3)}
+.amt-field input{width:130px;border:0;background:transparent;color:var(--ink);font:inherit;font-size:18px;font-weight:600;padding:9px 8px;outline:none;font-variant-numeric:tabular-nums;min-width:0}
+.amt-field select{border:0;border-left:1px solid var(--line);background:var(--surface-2);color:var(--ink);font:inherit;font-size:14px;padding:11px 10px;outline:none}
+.hint{margin:6px 0 0;font-size:13px;color:var(--c-tax)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:28px;background:transparent;margin:6px 0 0;display:block}
+input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px;background:var(--line)}
+input[type=range]::-moz-range-track{height:6px;border-radius:3px;background:var(--line)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:var(--ink);border:3px solid var(--surface);box-shadow:0 0 0 1px var(--ink);margin-top:-9px;cursor:grab}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--ink);border:3px solid var(--surface);box-shadow:0 0 0 1px var(--ink);cursor:grab}
+input[type=range]:focus-visible{outline:2px solid var(--c-pf);outline-offset:4px;border-radius:6px}
+.ticks{position:relative;height:20px;margin:0 12px;font-size:12px;color:var(--ink-3)}
+.ticks span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0}
+.chip{font:inherit;font-size:13px;font-weight:600;color:var(--ink-2);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 12px;cursor:pointer;font-variant-numeric:tabular-nums}
+.chip:hover{border-color:var(--ink-3)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip:focus-visible,.rowbtn:focus-visible,.seg input:focus-visible+label{outline:2px solid var(--c-pf);outline-offset:2px}
+.opts{display:flex;flex-wrap:wrap;gap:18px 28px;align-items:flex-start;margin-top:20px;padding-top:18px;border-top:1px solid var(--line)}
+.seg{position:relative;display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px;background:var(--surface-2)}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label{margin:0;padding:6px 14px;border-radius:999px;cursor:pointer;font-weight:600;font-size:13px;text-transform:none;letter-spacing:0;color:var(--ink-2)}
+.seg input:checked+label{background:var(--ink);color:var(--bg)}
+.checks{display:flex;flex-direction:column;gap:8px;min-width:0}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--ink);cursor:pointer}
+.check input{margin:3px 0 0;width:16px;height:16px;accent-color:var(--ink);flex:none}
+.check small{display:block;color:var(--ink-3);font-size:12.5px}
+.ded input{width:150px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit;font-size:15px;font-weight:600;padding:8px 10px;font-variant-numeric:tabular-nums}
+
+/* split */
+.bar{display:flex;height:12px;border-radius:6px;overflow:hidden;background:var(--surface-2);gap:2px}
+.bar span{display:block;min-width:0}
+.bar .b-take{background:var(--c-take)} .bar .b-pf{background:var(--c-pf)} .bar .b-tax{background:var(--c-tax)}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:14px}
+.card{background:var(--surface-2);border-radius:10px;padding:12px 14px;min-width:0}
+.card h3{margin:0 0 6px;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
+.dot{width:10px;height:10px;border-radius:50%;flex:none}
+.card .big{font-family:var(--font-display);font-size:clamp(18px,2.6vw,22px);font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums;overflow-wrap:anywhere;line-height:1.15}
+.card .words{color:var(--ink-3);font-size:13px;font-variant-numeric:tabular-nums}
+.card dl{margin:10px 0 0;display:grid;grid-template-columns:1fr auto;gap:2px 12px;font-size:13.5px;color:var(--ink-2)}
+.card dt{min-width:0} .card dd{margin:0;text-align:right;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+
+/* tables */
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px}
+.scroll{overflow-x:auto;min-width:0}
+table{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+th{font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3);font-weight:600;text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:7px 8px;border-bottom:1px solid var(--line)}
+th.r,td.r{text-align:right}
+td.r{white-space:nowrap}
+tr.total td{font-weight:700;border-bottom-color:var(--ink-3)}
+tr.sel td{background:var(--surface-2)}
+.rowbtn{font:inherit;font-weight:600;color:var(--ink);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
+.rowbtn:hover{text-decoration-color:var(--ink)}
+.mini{display:flex;width:110px;height:10px;border-radius:5px;overflow:hidden;background:var(--surface-2);gap:1px}
+.mini span{display:block}
+.empty{color:var(--ink-3);padding:10px 0}
+
+/* chart */
+.legend{display:flex;flex-wrap:wrap;gap:6px 22px;margin:0 0 8px;font-size:14px}
+.legend div{display:flex;align-items:center;gap:8px;font-variant-numeric:tabular-nums}
+.legend b{font-weight:700}
+.legend-at{color:var(--ink-3);font-size:13px;margin:0 0 6px;font-variant-numeric:tabular-nums}
+#chart{position:relative;width:100%;touch-action:pan-y;user-select:none;-webkit-user-select:none;cursor:crosshair}
+#chart svg{display:block}
+.a-take{fill:var(--c-take)} .a-pf{fill:var(--c-pf)} .a-tax{fill:var(--c-tax)} .a-ins{fill:var(--c-ins)}
+.bar .b-ins{background:var(--c-ins)}
+.cards.c4{grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid{stroke:var(--line);stroke-width:1}
+.axis{fill:var(--ink-3);font-size:11.5px;font-family:var(--font-body)}
+.mark{stroke:var(--ink);stroke-width:1.5}
+.ring{fill:var(--surface);stroke:var(--ink);stroke-width:1.5}
+.guide{stroke:var(--ink-2);stroke-width:1;stroke-dasharray:3 3}
+.note{margin:0;color:var(--ink-3);font-size:13px;max-width:80ch}
+.note + .note{margin-top:6px}
+@media (max-width:720px){
+  .cards,.cards.c4{grid-template-columns:1fr}
+  .two{grid-template-columns:1fr}
+  .panel{padding:16px}
+}
+@media (prefers-reduced-motion: no-preference){
+  .bar span{transition:flex-basis .25s ease,width .25s ease}
+}
+</style>
+<style>html{color-scheme:light dark}body{margin:0}</style>
+</head>
+<body>
+
+
+<main class="wrap">
+  <header>
+    <p class="eyebrow">FY 2026-27 · AY 2027-28 · Resident individual</p>
+    <h1>India CTC Breakup</h1>
+    <p class="lede">Pick any CTC from ₹1 to ₹100 crore. See how much is take-home, how much goes to PF and how much goes to income tax.</p>
+  </header>
+
+  <section class="panel" aria-label="Choose a CTC">
+    <div class="ctc-row">
+      <div class="ctc-read">
+        <span class="lbl">Annual CTC</span>
+        <span class="ctc-big" id="ctcBig">₹10 L</span>
+        <span class="ctc-full" id="ctcFull"></span>
+      </div>
+      <div class="field">
+        <label for="amt">Type an amount</label>
+        <div class="amt-field">
+          <span>₹</span>
+          <input id="amt" inputmode="decimal" autocomplete="off" value="10">
+          <select id="unit" aria-label="Unit">
+            <option value="1">Rupees</option>
+            <option value="100000" selected>Lakh</option>
+            <option value="10000000">Crore</option>
+          </select>
+        </div>
+        <p class="hint" id="hint" hidden></p>
+      </div>
+    </div>
+
+    <input type="range" id="slider" min="0" max="1000" step="1" value="667" aria-label="CTC, logarithmic from 1 rupee to 100 crore">
+    <div class="ticks" aria-hidden="true">
+      <span style="left:0;transform:none">₹1</span>
+      <span style="left:33.33%">₹1K</span>
+      <span style="left:55.56%">₹1 L</span>
+      <span style="left:77.78%">₹1 Cr</span>
+      <span style="left:100%;transform:translateX(-100%)">₹100 Cr</span>
+    </div>
+    <div class="chips" id="chips"></div>
+
+    <div class="opts">
+      <div>
+        <span class="lbl">Tax regime</span>
+        <div class="seg" role="radiogroup" aria-label="Tax regime">
+          <input type="radio" name="regime" id="rgNew" value="new" checked><label for="rgNew">New regime</label>
+          <input type="radio" name="regime" id="rgOld" value="old"><label for="rgOld">Old regime</label>
+        </div>
+      </div>
+      <div class="ded" id="dedBox" hidden>
+        <label class="lbl" for="ded">Deductions (80C, 80D and others)</label>
+        <input id="ded" inputmode="numeric" value="1,50,000" autocomplete="off">
+      </div>
+      <div class="checks">
+        
+        <label class="check"><input type="checkbox" id="optCap"><span>Apply the new EPFO wage ceiling of ₹25,000<small>PF is worked out on basic up to ₹25,000 a month (earlier ₹15,000). Turn off if your company pays PF on the full basic.</small></span></label>
+        <label class="check"><input type="checkbox" id="optLta"><span>Include LTA in my CTC<small>Paid once a year, equal to one month of basic, so monthly in-hand drops by LTA ÷ 12.</small></span></label>
+        <label class="check"><input type="checkbox" id="optRe"><span>Tax-free reimbursements in my CTC<small>Phone, fuel and similar bills repaid by the company. Paid in hand and not taxed.</small></span></label>
+        <div id="reBox" hidden><label class="lbl" for="reAmt">Reimbursements, per year</label><div class="amt-field"><span>₹</span><input id="reAmt" inputmode="numeric" value="60,000" autocomplete="off"></div><p class="note" id="reEq"></p><p class="hint" id="reHint" hidden></p></div>
+        <label class="check"><input type="checkbox" id="optIns"><span>Medical and term insurance in my CTC<small>Premiums paid by the company. Not taxed, but not paid in hand.</small></span></label>
+        <div id="insBox" hidden><label class="lbl" for="insMed">Medical insurance (individual), per year</label><div class="amt-field"><span>₹</span><input id="insMed" inputmode="numeric" value="15,000" autocomplete="off"></div><label class="lbl" for="insTerm" style="margin-top:10px">Term insurance, per year</label><div class="amt-field"><span>₹</span><input id="insTerm" inputmode="numeric" value="10,000" autocomplete="off"></div><p class="hint" id="insHint" hidden></p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" aria-live="polite">
+    <h2>Where this CTC goes</h2>
+    <p class="sub">Basic is 50% of CTC. PF is 12% of basic from you, and 12% from the employer. Both PF shares are counted in the PF slice. Take-home is what reaches your bank account.</p>
+    <div class="bar" id="bar" role="img" aria-label="Split of CTC"></div>
+    <div class="cards" id="cards"></div>
+  </section>
+
+  <section class="panel">
+    <h2>How the tax is worked out</h2>
+    <p class="sub" id="workSub"></p>
+    <div class="two">
+      <div class="scroll"><table id="steps"></table></div>
+      <div class="scroll" id="slabBox"></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>The split from ₹1 to ₹100 crore</h2>
+    <p class="sub">Hover over the chart to read any CTC. Tap or click to select it.</p>
+    <p class="legend-at" id="rdAt"></p>
+    <div class="legend">
+      <div><i class="dot" style="background:var(--c-take)"></i>Take-home <b id="rdTake"></b></div>
+      <div><i class="dot" style="background:var(--c-pf)"></i>PF <b id="rdPf"></b></div>
+      <div><i class="dot" style="background:var(--c-tax)"></i>Income tax <b id="rdTax"></b></div>
+      <div id="lgIns" hidden><i class="dot" style="background:var(--c-ins)"></i>Insurance <b id="rdIns"></b></div>
+    </div>
+    <div id="chart"></div>
+  </section>
+
+  <section class="panel">
+    <h2>CTC milestones</h2>
+    <p class="sub">Pick a row to load that CTC above.</p>
+    <div class="scroll"><table id="miles"></table></div>
+  </section>
+
+  <section class="panel">
+    <p class="note"><b>What is assumed.</b> Slabs, the ₹75,000 standard deduction (₹50,000 in the old regime), the section 87A rebate with marginal relief, surcharge with marginal relief and 4% cess follow the FY 2026-27 rules for a resident individual below 60. Budget 2026 left the slabs unchanged. Reimbursements are treated as fully tax-free in both regimes, which holds only when bills are submitted for official use. Employer-paid medical and term insurance premiums are also treated as tax-free. Check your company's policy.</p>
+    <p class="note">Not included: professional tax, HRA and LTA exemptions (LTA is taxed as ordinary salary here), employer NPS, tax on PF interest, bonuses paid outside CTC, and any tax on employer contributions above ₹7.5 lakh a year other than PF. Treat the numbers as an estimate and check with your payroll team or a tax advisor before you decide anything.</p>
+  </section>
+</main>
+
+<script>
+(function(){
+// CALC-START
+var NEW_SLABS=[[400000,0],[800000,0.05],[1200000,0.10],[1600000,0.15],[2000000,0.20],[2400000,0.25],[Infinity,0.30]];
+var OLD_SLABS=[[250000,0],[500000,0.05],[1000000,0.20],[Infinity,0.30]];
+var SUR={
+  "new":[[5e6,0.10],[1e7,0.15],[2e7,0.25]],
+  "old":[[5e6,0.10],[1e7,0.15],[2e7,0.25],[5e7,0.37]]
+};
+function slabTax(inc,slabs){
+  var prev=0,tax=0,rows=[];
+  for(var i=0;i<slabs.length;i++){
+    var lim=slabs[i][0],r=slabs[i][1];
+    var part=Math.max(0,Math.min(inc,lim)-prev);
+    rows.push({from:prev,to:lim,rate:r,amount:part,tax:part*r});
+    tax+=part*r; prev=lim;
+    if(inc<=lim)break;
+  }
+  return {tax:tax,rows:rows};
+}
+function surBand(inc,regime){
+  var T=0,rate=0,prevRate=0,list=SUR[regime];
+  for(var i=0;i<list.length;i++){
+    if(inc>list[i][0]){T=list[i][0];prevRate=rate;rate=list[i][1];}
+  }
+  return {T:T,rate:rate,prevRate:prevRate};
+}
+function calc(ctc,o){
+  var regime=o.regime,slabs=regime==="new"?NEW_SLABS:OLD_SLABS;
+  var basic=ctc*0.5;
+  var pfBase=o.capPf?Math.min(basic,300000):basic;
+  var eePF=0.12*pfBase;
+  var erPF=o.includeEr?0.12*pfBase:0;
+  var gross=ctc-erPF;
+  var lta=o.lta?basic/12:0;
+  var reimb=Math.min(o.reimb||0,Math.max(0,ctc-basic-erPF-lta));
+  var availIns=Math.max(0,ctc-basic-erPF-lta-reimb);
+  var insMed=Math.min(o.insMed||0,availIns);
+  var insTerm=Math.min(o.insTerm||0,availIns-insMed);
+  var ins=insMed+insTerm;
+  var std=regime==="new"?75000:50000;
+  var stdApplied=Math.min(std,gross);
+  var excessEr=Math.max(0,erPF-750000);
+  var afterStd=gross+excessEr-reimb-ins-stdApplied;
+  var dedApplied=regime==="old"?Math.min(Math.max(0,o.deductions||0),Math.max(0,afterStd)):0;
+  var taxable=Math.max(0,afterStd-dedApplied);
+  var st=slabTax(taxable,slabs);
+  var base=st.tax,rebate=0;
+  if(regime==="new"){
+    if(taxable<=1200000){rebate=Math.min(base,60000);}
+    else if(base>taxable-1200000){rebate=base-(taxable-1200000);}
+  }else{
+    if(taxable<=500000){rebate=Math.min(base,12500);}
+  }
+  var afterRebate=base-rebate;
+  var band=surBand(taxable,regime);
+  var surchargeGross=afterRebate*band.rate;
+  var total=afterRebate+surchargeGross;
+  var relief=0;
+  if(band.rate>0){
+    var prevTotal=slabTax(band.T,slabs).tax*(1+band.prevRate);
+    var over=total-prevTotal-(taxable-band.T);
+    if(over>0){relief=over;total-=over;}
+  }
+  var cess=total*0.04;
+  var tax=total+cess;
+  var takehome=gross-eePF-ins-tax;
+  return {
+    ctc:ctc,basic:basic,eePF:eePF,erPF:erPF,gross:gross,stdApplied:stdApplied,dedApplied:dedApplied,
+    excessEr:excessEr,taxable:taxable,slabRows:st.rows,base:base,rebate:rebate,
+    surRate:band.rate,surchargeGross:surchargeGross,relief:relief,cess:cess,tax:tax,takehome:takehome,
+    pf:eePF+erPF,lta:lta,reimb:reimb,ins:ins,insMed:insMed,insTerm:insTerm,monthly:Math.max(0,(takehome-lta)/12),
+    shTake:takehome/ctc,shPf:(eePF+erPF)/ctc,shTax:tax/ctc,shIns:ins/ctc
+  };
+}
+// CALC-END
+
+var $=function(id){return document.getElementById(id);};
+var MIN=1,MAX=1e9;
+var state={ctc:1e6,regime:"new",ded:150000,includeEr:true,capPf:false,lta:false,re:false,reAmt:60000,rePer:1,ins:false,insMed:15000,insTerm:10000};
+var nf=new Intl.NumberFormat("en-IN",{maximumFractionDigits:0});
+var nf2=new Intl.NumberFormat("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2});
+
+function money(n){
+  if(!isFinite(n))return "₹0";
+  var a=Math.abs(n);
+  var s=(a<100&&Math.abs(a-Math.round(a))>0.004)?nf2.format(a):nf.format(a);
+  return (n<0?"−":"")+"₹"+s;
+}
+function trim(v,d){return String(+v.toFixed(d));}
+function compact(n){
+  if(n>=1e7)return "₹"+trim(n/1e7,2)+" Cr";
+  if(n>=1e5)return "₹"+trim(n/1e5,2)+" L";
+  return money(n);
+}
+function pct(x){return (x*100).toFixed(1)+"%";}
+function opts(){return {regime:state.regime,deductions:state.ded,includeEr:state.includeEr,capPf:state.capPf,lta:state.lta,reimb:reAnn(),insMed:state.ins?state.insMed:0,insTerm:state.ins?state.insTerm:0};}
+function reAnn(){return state.re?state.reAmt*state.rePer:0;}
+function optKey(){return [state.regime,state.ded,state.includeEr,state.capPf,state.lta,state.re,state.reAmt,state.rePer,state.ins,state.insMed,state.insTerm].join("|");}
+function round3(v){
+  if(v<100)return Math.round(v*100)/100;
+  var p=Math.pow(10,Math.floor(Math.log10(v))-2);
+  return Math.round(v/p)*p;
+}
+
+/* ---------- controls ---------- */
+var PRESETS=[[1,"₹1"],[3e5,"₹3 L"],[5e5,"₹5 L"],[1e6,"₹10 L"],[1.5e6,"₹15 L"],[2.5e6,"₹25 L"],[5e6,"₹50 L"],[1e7,"₹1 Cr"],[5e7,"₹5 Cr"],[1e8,"₹10 Cr"],[1e9,"₹100 Cr"]];
+function buildChips(){
+  $("chips").innerHTML=PRESETS.map(function(p){
+    return '<button type="button" class="chip" data-v="'+p[0]+'" aria-pressed="false">'+p[1]+'</button>';
+  }).join("");
+}
+function writeField(v){
+  var u=v>=1e7?1e7:(v>=1e5?1e5:1);
+  $("unit").value=String(u);
+  $("amt").value=trim(v/u,4);
+}
+function setCtc(v,o){
+  o=o||{};
+  v=Math.min(MAX,Math.max(MIN,v));
+  state.ctc=v;
+  if(!o.keepField)writeField(v);
+  if(!o.fromSlider)$("slider").value=String(Math.log10(v)/9*1000);
+  update();
+}
+function readAmt(){
+  var n=parseFloat(String($("amt").value).replace(/,/g,""));
+  return isFinite(n)&&n>0?n*Number($("unit").value):NaN;
+}
+function showHint(raw){
+  var h=$("hint");
+  if(raw>MAX){h.textContent="Capped at ₹100 Cr.";h.hidden=false;}
+  else if(raw<MIN){h.textContent="The minimum is ₹1.";h.hidden=false;}
+  else h.hidden=true;
+}
+
+/* ---------- render ---------- */
+function card(color,title,main,words,rows){
+  return '<div class="card"><h3><i class="dot" style="background:'+color+'"></i>'+title+'</h3>'+
+    '<div class="big">'+main+'</div>'+
+    '<div class="words">'+(words||"&nbsp;")+'</div>'+
+    '<dl>'+rows.map(function(r){return '<dt>'+r[0]+'</dt><dd>'+r[1]+'</dd>';}).join("")+'</dl></div>';
+}
+function words(n){return n>=1e5?"about "+compact(n)+" a year":"";}
+
+function renderResults(r){
+  $("ctcBig").textContent=compact(r.ctc);
+  $("ctcFull").textContent=money(r.ctc)+" a year · "+money(r.ctc/12)+" a month";
+  var take=Math.max(0,r.shTake)*100,pf=Math.max(0,r.shPf)*100,tax=Math.max(0,r.shTax)*100,ins=Math.max(0,r.shIns)*100;
+  $("bar").innerHTML='<span class="b-take" style="flex:'+take+' 1 0"></span><span class="b-pf" style="flex:'+pf+' 1 0"></span><span class="b-tax" style="flex:'+tax+' 1 0"></span><span class="b-ins" style="flex:'+ins+' 1 0"></span>';
+  $("bar").setAttribute("aria-label","Take-home "+pct(r.shTake)+", PF "+pct(r.shPf)+", income tax "+pct(r.shTax)+(r.ins>0?", insurance "+pct(r.shIns):"")+" of CTC");
+  var taxOnTaxable=r.taxable>0?pct(r.tax/r.taxable):"0.0%";
+  var taxSaved=0;
+  if(r.reimb>0||r.ins>0){var o0=opts();o0.reimb=0;o0.insMed=0;o0.insTerm=0;taxSaved=Math.max(0,calc(r.ctc,o0).tax-r.tax);}
+  var rq=reAnn();
+  $("reEq").textContent=state.re?money(rq/12)+" a month, "+money(rq)+" a year":"";
+  $("reHint").hidden=!(rq>r.reimb);
+  if(rq>r.reimb)$("reHint").textContent="Capped at "+money(r.reimb/12)+" a month. That is all the CTC leaves after basic, employer PF and LTA.";
+  var iq=state.ins?state.insMed+state.insTerm:0;
+  $("insHint").hidden=!(iq>r.ins+0.5);
+  if(iq>r.ins+0.5)$("insHint").textContent="Capped at "+money(r.ins)+" a year. That is all the CTC leaves after basic, employer PF, LTA and reimbursements.";
+  $("cards").className="cards"+(r.ins>0?" c4":"");
+  $("cards").innerHTML=
+    card("var(--c-take)","Take-home",money(r.takehome),words(r.takehome),[
+      ["Monthly in-hand",money(r.monthly)],...(r.lta>0?[["LTA, paid once a year",money(r.lta)]]:[]),...(r.reimb>0?[["Tax-free reimbursements, in hand",money(r.reimb)]]:[]),["Share of CTC",pct(r.shTake)]
+    ])+
+    card("var(--c-pf)","PF (you + employer)",money(r.pf),words(r.pf),[
+      ["Per month",money(r.pf/12)],
+      ["Your 12%, cut from salary",money(r.eePF)+" ("+money(r.eePF/12)+"/mo)"],
+      ["Employer 12%, inside CTC",money(r.erPF)+" ("+money(r.erPF/12)+"/mo)"],
+      ["Share of CTC",pct(r.shPf)]
+    ])+
+    card("var(--c-tax)","Income tax",money(r.tax),words(r.tax),[
+      ["Per month",money(r.tax/12)],
+      ["Share of CTC",pct(r.shTax)],
+      ["On taxable income",taxOnTaxable],
+      ...(r.reimb>0||r.ins>0?[["Tax saved by tax-free benefits",money(taxSaved)]]:[])
+    ])+
+    (r.ins>0?card("var(--c-ins)","Insurance (employer pays)",money(r.ins),words(r.ins),[
+      ["Medical, individual",money(r.insMed)],
+      ["Term",money(r.insTerm)],
+      ["Per month",money(r.ins/12)],
+      ["Share of CTC",pct(r.shIns)]
+    ]):"");
+  document.querySelectorAll(".chip").forEach(function(c){
+    c.setAttribute("aria-pressed",String(Number(c.getAttribute("data-v"))===state.ctc));
+  });
+}
+
+function rangeLabel(row){
+  if(row.from===0)return "Up to "+compact(row.to);
+  if(row.to===Infinity)return "Above "+compact(row.from);
+  return compact(row.from)+" to "+compact(row.to);
+}
+function renderWork(r){
+  var o=opts();
+  var rows=[];
+  rows.push(["CTC for the year",r.ctc,"total"]);
+  if(r.erPF>0)rows.push(["Employer PF, 12% of basic",-r.erPF,"sub"]);
+  rows.push(["Gross salary",r.gross,"total"]);
+  if(r.lta>0)rows.push(["Of which LTA, paid once a year (one month of basic)",r.lta,"info"]);
+  if(r.reimb>0)rows.push(["Tax-free reimbursements (paid in hand, not taxed)",-r.reimb,"sub"]);
+  if(r.insMed>0)rows.push(["Medical insurance paid by employer (not taxed, not in hand)",-r.insMed,"sub"]);
+  if(r.insTerm>0)rows.push(["Term insurance paid by employer (not taxed, not in hand)",-r.insTerm,"sub"]);
+  rows.push(["Standard deduction",-r.stdApplied,"sub"]);
+  if(o.regime==="old")rows.push(["Deductions (80C, 80D, others)",-r.dedApplied,"sub"]);
+  if(r.excessEr>0)rows.push(["Employer PF above ₹7.5 L is taxable",r.excessEr,"add"]);
+  rows.push(["Taxable income",r.taxable,"total"]);
+  rows.push(["Tax on slabs",r.base,""]);
+  if(r.rebate>0)rows.push(["Rebate under section 87A",-r.rebate,"sub"]);
+  if(r.surchargeGross>0)rows.push(["Surcharge at "+Math.round(r.surRate*100)+"%",r.surchargeGross,"add"]);
+  if(r.relief>0)rows.push(["Marginal relief on surcharge",-r.relief,"sub"]);
+  rows.push(["Health and education cess, 4%",r.cess,"add"]);
+  rows.push(["Income tax for the year",r.tax,"total"]);
+  rows.push(["Take-home = gross − your PF − "+(r.ins>0?"insurance − ":"")+"tax",r.takehome,"total"]);
+  $("steps").innerHTML='<thead><tr><th>Step</th><th class="r">Amount</th></tr></thead><tbody>'+
+    rows.map(function(x){
+      var v=x[2]==="add"?"+ "+money(x[1]):money(x[1]);
+      return '<tr class="'+(x[2]==="total"?"total":"")+'"><td>'+x[0]+'</td><td class="r">'+v+'</td></tr>';
+    }).join("")+'</tbody>';
+  $("workSub").textContent=(o.regime==="new"?"New regime":"Old regime")+" slabs applied to taxable income of "+money(r.taxable)+".";
+  if(r.taxable<=0){
+    $("slabBox").innerHTML='<p class="empty">No taxable income at this CTC, so no slab tax applies.</p>';
+  }else{
+    $("slabBox").innerHTML='<table><thead><tr><th>Slab</th><th class="r">Rate</th><th class="r">Income in slab</th><th class="r">Tax</th></tr></thead><tbody>'+
+      r.slabRows.filter(function(s){return s.amount>0;}).map(function(s){
+        return '<tr><td>'+rangeLabel(s)+'</td><td class="r">'+Math.round(s.rate*100)+'%</td><td class="r">'+money(s.amount)+'</td><td class="r">'+money(s.tax)+'</td></tr>';
+      }).join("")+'</tbody></table>';
+  }
+}
+
+var MILES=[1,1e4,1e5,3e5,5e5,7e5,1e6,1.2e6,1.5e6,2e6,3e6,5e6,7.5e6,1e7,2e7,5e7,1e8,5e8,1e9];
+var milesKey="";
+function renderMiles(){
+  var key=optKey();
+  if(key!==milesKey){
+    milesKey=key;
+    var body=MILES.map(function(c){
+      var r=calc(c,opts());
+      return '<tr data-c="'+c+'"><td><button type="button" class="rowbtn" data-v="'+c+'">'+compact(c)+'</button></td>'+
+        '<td><div class="mini"><span style="width:'+(r.shTake*100)+'%;background:var(--c-take)"></span><span style="width:'+(r.shPf*100)+'%;background:var(--c-pf)"></span><span style="width:'+(r.shTax*100)+'%;background:var(--c-tax)"></span><span style="width:'+(r.shIns*100)+'%;background:var(--c-ins)"></span></div></td>'+
+        '<td class="r">'+money(r.monthly)+'</td><td class="r">'+money(r.pf/12)+'</td><td class="r">'+money(r.tax/12)+'</td><td class="r">'+pct(r.shTax)+'</td></tr>';
+    }).join("");
+    $("miles").innerHTML='<thead><tr><th>CTC</th><th>Split</th><th class="r">Take-home / month</th><th class="r">PF / month</th><th class="r">Tax / month</th><th class="r">Tax % of CTC</th></tr></thead><tbody>'+body+'</tbody>';
+  }
+  document.querySelectorAll("#miles tbody tr").forEach(function(tr){
+    tr.classList.toggle("sel",Number(tr.getAttribute("data-c"))===state.ctc);
+  });
+}
+
+/* ---------- chart ---------- */
+var cache={key:"",pts:null};
+function curve(){
+  var key=optKey();
+  if(cache.key===key)return cache.pts;
+  var N=260,pts=[];
+  for(var i=0;i<=N;i++){
+    var c=Math.pow(10,9*i/N),r=calc(c,opts());
+    pts.push({c:c,take:Math.max(0,r.shTake),pf:r.shPf,tax:r.shTax,ins:r.shIns});
+  }
+  cache={key:key,pts:pts};
+  return pts;
+}
+var geo=null;
+var XT_WIDE=[[1,"₹1"],[10,"₹10"],[100,"₹100"],[1e3,"₹1K"],[1e4,"₹10K"],[1e5,"₹1 L"],[1e6,"₹10 L"],[1e7,"₹1 Cr"],[1e8,"₹10 Cr"],[1e9,"₹100 Cr"]];
+var XT_NARROW=[[1,"₹1"],[1e3,"₹1K"],[1e5,"₹1 L"],[1e7,"₹1 Cr"],[1e9,"₹100 Cr"]];
+function drawChart(){
+  var host=$("chart"),w=Math.floor(host.clientWidth);
+  if(w<200)return;
+  var h=w<520?250:310,m={l:40,r:14,t:8,b:28};
+  var iw=w-m.l-m.r,ih=h-m.t-m.b;
+  var X=function(c){return m.l+Math.log10(c)/9*iw;};
+  var Y=function(p){return m.t+(1-p)*ih;};
+  geo={m:m,iw:iw,w:w,h:h,X:X,Y:Y};
+  var pts=curve();
+  var f=function(fn){return pts.map(function(p){return X(p.c).toFixed(1)+","+Y(fn(p)).toFixed(1);});};
+  var base=f(function(){return 0;}),t1=f(function(p){return p.take;}),t2=f(function(p){return p.take+p.pf;}),t3=f(function(p){return p.take+p.pf+p.tax;}),t4=f(function(){return 1;});
+  var rev=function(a){return a.slice().reverse();};
+  var s='<svg width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'" role="img" aria-label="Stacked chart of take-home, PF and tax as a share of CTC from 1 rupee to 100 crore">';
+  [0,0.25,0.5,0.75,1].forEach(function(p){
+    s+='<line class="grid" x1="'+m.l+'" x2="'+(w-m.r)+'" y1="'+Y(p)+'" y2="'+Y(p)+'"/>';
+    s+='<text class="axis" x="'+(m.l-6)+'" y="'+(Y(p)+4)+'" text-anchor="end">'+Math.round(p*100)+'%</text>';
+  });
+  s+='<path class="a-take" d="M'+t1.join("L")+"L"+rev(base).join("L")+'Z"/>';
+  s+='<path class="a-pf" d="M'+t2.join("L")+"L"+rev(t1).join("L")+'Z"/>';
+  s+='<path class="a-tax" d="M'+t3.join("L")+"L"+rev(t2).join("L")+'Z"/>';
+  s+='<path class="a-ins" d="M'+t4.join("L")+"L"+rev(t3).join("L")+'Z"/>';
+  var xt=w<560?XT_NARROW:XT_WIDE;
+  xt.forEach(function(t,i){
+    var x=X(t[0]);
+    var anchor=i===0?"start":(i===xt.length-1?"end":"middle");
+    var tx=i===0?m.l:(i===xt.length-1?w-m.r:x);
+    s+='<line class="grid" x1="'+x+'" x2="'+x+'" y1="'+(h-m.b)+'" y2="'+(h-m.b+4)+'"/>';
+    s+='<text class="axis" x="'+tx+'" y="'+(h-8)+'" text-anchor="'+anchor+'">'+t[1]+'</text>';
+  });
+  var r=calc(state.ctc,opts()),cx=X(state.ctc);
+  s+='<line class="mark" x1="'+cx+'" x2="'+cx+'" y1="'+m.t+'" y2="'+(h-m.b)+'"/>';
+  s+='<circle class="ring" cx="'+cx+'" cy="'+Y(Math.max(0,r.shTake))+'" r="4.5"/>';
+  s+='<circle class="ring" cx="'+cx+'" cy="'+Y(Math.max(0,r.shTake)+r.shPf)+'" r="4.5"/>';
+  s+='<line class="guide" id="guide" x1="0" x2="0" y1="'+m.t+'" y2="'+(h-m.b)+'" visibility="hidden"/>';
+  s+='</svg>';
+  host.innerHTML=s;
+}
+function setReadout(c){
+  var r=calc(c,opts());
+  $("rdAt").textContent="At a CTC of "+compact(c);
+  $("rdTake").textContent=pct(Math.max(0,r.shTake));
+  $("rdPf").textContent=pct(r.shPf);
+  $("rdTax").textContent=pct(r.shTax);
+  $("rdIns").textContent=pct(r.shIns);
+  $("lgIns").hidden=!state.ins;
+}
+function chartC(e){
+  if(!geo)return null;
+  var rect=$("chart").getBoundingClientRect();
+  var x=e.clientX-rect.left;
+  var t=(x-geo.m.l)/geo.iw;
+  t=Math.min(1,Math.max(0,t));
+  return {c:Math.pow(10,t*9),x:geo.m.l+t*geo.iw};
+}
+function showGuide(x){
+  var g=$("guide");
+  if(!g)return;
+  g.setAttribute("x1",x);g.setAttribute("x2",x);g.setAttribute("visibility","visible");
+}
+var dragging=false;
+function initChart(){
+  var host=$("chart");
+  host.addEventListener("pointermove",function(e){
+    var p=chartC(e);if(!p)return;
+    if(e.pointerType==="mouse"&&!dragging){showGuide(p.x);setReadout(p.c);return;}
+    if(dragging){setCtc(round3(Math.max(MIN,p.c)));}
+  });
+  host.addEventListener("pointerdown",function(e){
+    var p=chartC(e);if(!p)return;
+    dragging=true;
+    try{host.setPointerCapture(e.pointerId);}catch(err){}
+    setCtc(round3(Math.max(MIN,p.c)));
+  });
+  var end=function(){dragging=false;};
+  host.addEventListener("pointerup",end);
+  host.addEventListener("pointercancel",end);
+  host.addEventListener("pointerleave",function(e){
+    if(e.pointerType==="mouse"&&!dragging){
+      var g=$("guide");if(g)g.setAttribute("visibility","hidden");
+      setReadout(state.ctc);
+    }
+  });
+  if(window.ResizeObserver){
+    var last=0;
+    new ResizeObserver(function(){
+      var w=host.clientWidth;
+      if(w!==last){last=w;drawChart();}
+    }).observe(host);
+  }
+}
+
+function update(){
+  var r=calc(state.ctc,opts());
+  renderResults(r);
+  renderWork(r);
+  renderMiles();
+  drawChart();
+  setReadout(state.ctc);
+}
+
+/* ---------- wiring ---------- */
+buildChips();
+$("chips").addEventListener("click",function(e){
+  var b=e.target.closest(".chip");
+  if(b)setCtc(Number(b.getAttribute("data-v")));
+});
+$("miles").addEventListener("click",function(e){
+  var b=e.target.closest(".rowbtn");
+  if(b){
+    setCtc(Number(b.getAttribute("data-v")));
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+});
+$("slider").addEventListener("input",function(){
+  var x=Number($("slider").value);
+  var v=x<=0?1:round3(Math.pow(10,x/1000*9));
+  setCtc(v,{fromSlider:true});
+});
+$("amt").addEventListener("input",function(){
+  var raw=readAmt();
+  if(isNaN(raw))return;
+  showHint(raw);
+  setCtc(raw,{keepField:true});
+});
+$("amt").addEventListener("change",function(){
+  var raw=readAmt();
+  if(isNaN(raw)){writeField(state.ctc);$("hint").hidden=true;return;}
+  if(raw>MAX||raw<MIN){writeField(state.ctc);}
+});
+$("unit").addEventListener("change",function(){
+  var raw=readAmt();
+  if(isNaN(raw)){writeField(state.ctc);return;}
+  showHint(raw);
+  setCtc(raw,{keepField:true});
+});
+document.querySelectorAll('input[name="regime"]').forEach(function(el){
+  el.addEventListener("change",function(){
+    state.regime=el.value;
+    $("dedBox").hidden=state.regime!=="old";
+    update();
+  });
+});
+$("ded").addEventListener("input",function(){
+  var n=parseFloat(String($("ded").value).replace(/,/g,""));
+  state.ded=isFinite(n)&&n>=0?n:0;
+  update();
+});
+$("ded").addEventListener("change",function(){$("ded").value=nf.format(state.ded);});
+
+$("optCap").addEventListener("change",function(){state.capPf=$("optCap").checked;update();});
+$("optLta").addEventListener("change",function(){state.lta=$("optLta").checked;update();});
+$("optRe").addEventListener("change",function(){state.re=$("optRe").checked;$("reBox").hidden=!state.re;update();});
+function numOf(id){var n=parseFloat(String($(id).value).replace(/,/g,""));return isFinite(n)&&n>=0?n:0;}
+$("reAmt").addEventListener("input",function(){state.reAmt=numOf("reAmt");update();});
+
+$("optIns").addEventListener("change",function(){state.ins=$("optIns").checked;$("insBox").hidden=!state.ins;update();});
+$("insMed").addEventListener("input",function(){state.insMed=numOf("insMed");update();});
+$("insTerm").addEventListener("input",function(){state.insTerm=numOf("insTerm");update();});
+["insMed","insTerm"].forEach(function(id){$(id).addEventListener("change",function(){$(id).value=nf.format(numOf(id));});});
+$("reAmt").addEventListener("change",function(){$("reAmt").value=nf.format(state.reAmt);});
+initChart();
+setCtc(1e6);
+})();
+</script>
+
+</body>
+</html>
