@@ -407,7 +407,7 @@ function renderResults(r){
   $("cards").className="cards"+(r.ins>0?" c4":"");
   $("cards").innerHTML=
     card("var(--c-take)","Take-home",money(r.takehome),words(r.takehome),[
-      ["Monthly in-hand",money(r.monthly)],...(r.lta>0?[["LTA, paid once a year",money(r.lta)]]:[]),...(r.reimb>0?[["Tax-free reimbursements, in hand",money(r.reimb)]]:[]),["Share of CTC",pct(r.shTake)]
+      ["Monthly in-hand",money(r.monthly)],...(r.lta>0?[["LTA, paid once a year",money(r.lta)]]:[]),...(r.reimb>0?[["Tax free reimbursements is part of monthly above",money(r.reimb)]]:[]),["Share of CTC",pct(r.shTake)]
     ])+
     card("var(--c-pf)","PF (you + employer)",money(r.pf),words(r.pf),[
       ["Per month",money(r.pf/12)],
